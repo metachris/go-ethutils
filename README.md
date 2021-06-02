@@ -1,8 +1,16 @@
 ## Go helpers for dealing with Ethereum and geth
 
-Various helpers that make my life easier.
+Various helpers that make my life easier when working with Ethereum.
+
+
+### Example: Flashbots failed transactions
 
 There is an example for getting failed Flashbots transactions:
+
+Notes: 
+
+* You can set the geth node URI as environment variable `ETH_NODE`, or pass it in as `-eth` argument.
+* You should use an IPC connection to the geth node, as there are a lot of API calls (one for each tx).
 
 ```bash
 # Subscribe to new blocks and find failed Flashbots tx:

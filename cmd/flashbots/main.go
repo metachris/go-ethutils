@@ -19,6 +19,7 @@ import (
 )
 
 func main() {
+	ethUri := flag.String("eth", os.Getenv("ETH_NODE"), "Ethereum node URI")
 	blockHeightPtr := flag.Int("block", 0, "specific block to check")
 	datePtr := flag.String("date", "", "date (yyyy-mm-dd or -1d)")
 	hourPtr := flag.Int("hour", 0, "hour (UTC)")
@@ -27,7 +28,13 @@ func main() {
 	watchPtr := flag.Bool("watch", false, "watch and process new blocks")
 	flag.Parse()
 
-	client, err := ethclient.Dial(os.Getenv("ETH_NODE"))
+	if *ethUri == "" {
+		log.Fatal("Pass a valid eth node with -eth argument or ETH_NODE env var.")
+	} else if !strings.HasPrefix(*ethUri, "/") {
+		fmt.Printf("Warning: You should use a direct IPC connection to the Ethereum node, else it might be slow to download receipts for all transactions.\n")
+	}
+
+	client, err := ethclient.Dial(*ethUri)
 	utils.Perror(err)
 
 	if *datePtr != "" || *blockHeightPtr != 0 {
