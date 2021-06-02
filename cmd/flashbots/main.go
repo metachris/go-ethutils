@@ -14,28 +14,9 @@ import (
 
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/metachris/ethutils/blockswithtx"
-	"github.com/metachris/ethutils/utils"
+	"github.com/metachris/go-ethutils/blockswithtx"
+	"github.com/metachris/go-ethutils/utils"
 )
-
-func perror(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
-const (
-	InfoColor    = "\033[1;34m%s\033[0m"
-	NoticeColor  = "\033[1;36m%s\033[0m"
-	WarningColor = "\033[1;33m%s\033[0m"
-	ErrorColor   = "\033[1;31m%s\033[0m"
-	DebugColor   = "\033[0;36m%s\033[0m"
-)
-
-func colorPrintf(color string, format string, a ...interface{}) {
-	str := fmt.Sprintf(format, a...)
-	fmt.Printf(string(color), str)
-}
 
 func main() {
 	blockHeightPtr := flag.Int("block", 0, "specific block to check")
@@ -47,7 +28,7 @@ func main() {
 	flag.Parse()
 
 	client, err := ethclient.Dial(os.Getenv("ETH_NODE"))
-	perror(err)
+	utils.Perror(err)
 
 	if *datePtr != "" || *blockHeightPtr != 0 {
 		// A start for historical analysis was given
@@ -60,7 +41,6 @@ func main() {
 	if *watchPtr {
 		watch(client)
 	}
-
 }
 
 func getBlockRangeFromArguments(client *ethclient.Client, blockHeight int, date string, hour int, min int, length string) (startBlock int64, endBlock int64) {
@@ -79,24 +59,24 @@ func getBlockRangeFromArguments(client *ethclient.Client, blockHeight int, date 
 	switch {
 	case strings.HasSuffix(length, "s"):
 		timespanSec, err = strconv.Atoi(strings.TrimSuffix(length, "s"))
-		perror(err)
+		utils.Perror(err)
 	case strings.HasSuffix(length, "m"):
 		timespanSec, err = strconv.Atoi(strings.TrimSuffix(length, "m"))
-		perror(err)
+		utils.Perror(err)
 		timespanSec *= 60
 	case strings.HasSuffix(length, "h"):
 		timespanSec, err = strconv.Atoi(strings.TrimSuffix(length, "h"))
-		perror(err)
+		utils.Perror(err)
 		timespanSec *= 60 * 60
 	case strings.HasSuffix(length, "d"):
 		timespanSec, err = strconv.Atoi(strings.TrimSuffix(length, "d"))
-		perror(err)
+		utils.Perror(err)
 		timespanSec *= 60 * 60 * 24
 	case length == "": // default 1 block
 		numBlocks = 1
 	default: // No suffix: number of blocks
 		numBlocks, err = strconv.Atoi(length)
-		perror(err)
+		utils.Perror(err)
 	}
 
 	// startTime is set from date argument, or block timestamp if -block argument was used
@@ -105,7 +85,7 @@ func getBlockRangeFromArguments(client *ethclient.Client, blockHeight int, date 
 	// Get start block
 	if blockHeight > 0 { // start at block height
 		startBlockHeader, err := client.HeaderByNumber(context.Background(), big.NewInt(int64(blockHeight)))
-		perror(err)
+		utils.Perror(err)
 		startBlock = startBlockHeader.Number.Int64()
 		startTime = time.Unix(int64(startBlockHeader.Time), 0)
 	} else {
@@ -121,15 +101,15 @@ func getBlockRangeFromArguments(client *ethclient.Client, blockHeight int, date 
 				t := time.Now().AddDate(-1, 0, 0)
 				startTime = t.Truncate(24 * time.Hour)
 			} else {
-				panic(fmt.Sprintf("Not a valid date offset: %s", date))
+				panic(fmt.Sprintf("Not a valid date offset: '%s'. Can be d, m, y", date))
 			}
 		} else {
 			startTime, err = utils.DateToTime(date, hour, min, 0)
-			perror(err)
+			utils.Perror(err)
 		}
 
 		startBlockHeader, err := utils.GetFirstBlockHeaderAtOrAfterTime(client, startTime)
-		perror(err)
+		utils.Perror(err)
 		startBlock = startBlockHeader.Number.Int64()
 	}
 
@@ -193,7 +173,7 @@ func watch(client *ethclient.Client) {
 			log.Fatal(err)
 		case header := <-headers:
 			b, err := blockswithtx.GetBlockWithTxReceipts(client, header.Number.Int64())
-			perror(err)
+			utils.Perror(err)
 			checkBlockWithReceipts(b)
 		}
 	}
@@ -214,7 +194,7 @@ func checkBlockWithReceipts(b *blockswithtx.BlockWithTxReceipts) {
 				// fmt.Printf("Flashbots tx in block %v: %s from %v\n", b.Block.Number(), tx.Hash(), sender)
 			} else { // failed tx
 				// fmt.Printf("block %v: failed Flashbots tx %s from %v\n", WarningColor, b.Block.Number(), tx.Hash(), sender)
-				colorPrintf(ErrorColor, "block %v: failed Flashbots tx %s from %v\n", b.Block.Number(), tx.Hash(), sender)
+				utils.ColorPrintf(utils.ErrorColor, "block %v: failed Flashbots tx %s from %v\n", b.Block.Number(), tx.Hash(), sender)
 			}
 		}
 	}
