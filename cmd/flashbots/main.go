@@ -9,12 +9,13 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/metachris/go-eth-utils/blockswithtx"
-	"github.com/metachris/go-eth-utils/utils"
+	"github.com/metachris/ethutils/blockswithtx"
+	"github.com/metachris/ethutils/utils"
 )
 
 func perror(err error) {
@@ -156,17 +157,27 @@ func checkBlocks(client *ethclient.Client, startHeight int64, endHeight int64) {
 	blockChan := make(chan *blockswithtx.BlockWithTxReceipts, 100) // channel for resulting BlockWithTxReceipt
 
 	// Start thread listening for blocks (with tx receipts) from geth worker pool
-	var numTx uint64
+	var numTx int64
+	var lock sync.Mutex
 	go func() {
+		lock.Lock()
+		defer lock.Unlock()
 		for b := range blockChan {
 			checkBlockWithReceipts(b)
-			numTx += uint64(len(b.Block.Transactions()))
+			numTx += int64(len(b.Block.Transactions()))
 		}
 	}()
 
+	// Start fetching and processing blocks
 	blockswithtx.GetBlocksWithTxReceipts(client, blockChan, startHeight, endHeight, 5)
+
+	// Wait for processing to finish
+	close(blockChan)
+	lock.Lock() // wait until all blocks have been processed
+
+	// All done
 	t2 := time.Since(t1)
-	fmt.Printf("Processed %d blocks (%d transactions) in %.3f seconds\n", endHeight-startHeight, numTx, t2.Seconds())
+	fmt.Printf("Processed %s blocks (%s transactions) in %.3f seconds\n", utils.NumberToHumanReadableString(endHeight-startHeight, 0), utils.NumberToHumanReadableString(numTx, 0), t2.Seconds())
 }
 
 func watch(client *ethclient.Client) {
@@ -189,8 +200,8 @@ func watch(client *ethclient.Client) {
 }
 
 func checkBlockWithReceipts(b *blockswithtx.BlockWithTxReceipts) {
-	// fmt.Printf("block %v: %d tx\n", b.Block.Number(), len(b.Block.Transactions()))
 	utils.PrintBlock(b.Block)
+
 	for _, tx := range b.Block.Transactions() {
 		receipt := b.TxReceipts[tx.Hash()]
 		if receipt == nil {

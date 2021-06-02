@@ -1,4 +1,4 @@
-module github.com/metachris/go-eth-utils
+module github.com/metachris/ethutils
 
 go 1.16
 

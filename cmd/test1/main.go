@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/metachris/go-eth-utils/blockswithtx"
-	"github.com/metachris/go-eth-utils/utils"
+	"github.com/metachris/ethutils/blockswithtx"
+	"github.com/metachris/ethutils/utils"
 )
 
 func perror(err error) {

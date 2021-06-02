@@ -3,7 +3,6 @@ package utils
 import (
 	"context"
 	"errors"
-	"fmt"
 	"math/big"
 	"time"
 
@@ -11,27 +10,6 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 )
-
-func Abs(x int64) int64 {
-	if x < 0 {
-		return -x
-	}
-	return x
-}
-
-func IsBigIntZero(n *big.Int) bool {
-	return len(n.Bits()) == 0
-}
-
-func PrintBlock(block *types.Block) {
-	t := time.Unix(int64(block.Header().Time), 0).UTC()
-	fmt.Printf("%d \t %s \t tx=%-4d \t gas=%d\n", block.Header().Number, t, len(block.Transactions()), block.GasUsed())
-}
-
-func DateToTime(dayString string, hour int, min int, sec int) (time.Time, error) {
-	dateString := fmt.Sprintf("%sT%02d:%02d:%02dZ", dayString, hour, min, sec)
-	return time.Parse(time.RFC3339, dateString)
-}
 
 func GetTxSender(tx *types.Transaction) (from common.Address, err error) {
 	from, err = types.Sender(types.NewEIP155Signer(tx.ChainId()), tx)

@@ -13,6 +13,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
+// BlockWithTxReceipts contains a single block and receipts for all its transactions (eth does not guarantee that every tx has a receipt)
 type BlockWithTxReceipts struct {
 	Block      *types.Block
 	TxReceipts map[common.Hash]*types.Receipt
@@ -55,6 +56,7 @@ func GetBlocksWithTxReceipts(client *ethclient.Client, blockChan chan<- *BlockWi
 	// Start eth client thread pool
 	for w := 1; w <= concurrency; w++ {
 		blockWorkerWg.Add(1)
+
 		go func() {
 			defer blockWorkerWg.Done()
 			for blockHeight := range blockHeightChan {
@@ -76,7 +78,4 @@ func GetBlocksWithTxReceipts(client *ethclient.Client, blockChan chan<- *BlockWi
 	// Close worker channel and wait for workers to finish
 	close(blockHeightChan)
 	blockWorkerWg.Wait()
-
-	// Close blockChan
-	close(blockChan)
 }
