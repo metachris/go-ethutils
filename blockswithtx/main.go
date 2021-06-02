@@ -14,22 +14,22 @@ import (
 )
 
 type BlockWithTxReceipts struct {
-	block      *types.Block
-	txReceipts map[common.Hash]*types.Receipt
+	Block      *types.Block
+	TxReceipts map[common.Hash]*types.Receipt
 }
 
-// GetBlockWithTxReceipts downloads a block and receipts for all transactions
+// GetBlockWithTxReceipts returns a single block with receipts for all transactions
 func GetBlockWithTxReceipts(client *ethclient.Client, height int64) (res BlockWithTxReceipts, err error) {
-	res.txReceipts = make(map[common.Hash]*types.Receipt)
+	res.TxReceipts = make(map[common.Hash]*types.Receipt)
 
 	// Get the block
-	res.block, err = client.BlockByNumber(context.Background(), big.NewInt(height))
+	res.Block, err = client.BlockByNumber(context.Background(), big.NewInt(height))
 	if err != nil {
 		return res, err
 	}
 
 	// Get receipts for all transactions
-	for _, tx := range res.block.Transactions() {
+	for _, tx := range res.Block.Transactions() {
 		receipt, err := client.TransactionReceipt(context.Background(), tx.Hash())
 		if err != nil {
 			if errors.Is(err, ethereum.NotFound) {
@@ -39,13 +39,15 @@ func GetBlockWithTxReceipts(client *ethclient.Client, height int64) (res BlockWi
 			return res, err
 
 		}
-		res.txReceipts[tx.Hash()] = receipt
+		res.TxReceipts[tx.Hash()] = receipt
 	}
 
 	return res, nil
 }
 
-func GetBlocksWithReceipts(client *ethclient.Client, callback func(b *BlockWithTxReceipts), startBlock int64, endBlock int64, numThreads int) {
+// GetBlocksWithTxReceipts downloads a range of blocks with tx receipts and sends them to a user-defined function for processing.
+// Uses numThreads concurrent geth connections to speed things up. 5 is usually a good number for a direct IPC connection.
+func GetBlocksWithTxReceipts(client *ethclient.Client, callback func(b *BlockWithTxReceipts), startBlock int64, endBlock int64, numThreads int) {
 	var blockWorkerWg sync.WaitGroup
 	blockHeightChan := make(chan int64, 100)          // blockHeight to fetch with receipts
 	blockChan := make(chan *BlockWithTxReceipts, 100) // channel for resulting BlockWithTxReceipt
@@ -56,7 +58,6 @@ func GetBlocksWithReceipts(client *ethclient.Client, callback func(b *BlockWithT
 		go func() {
 			defer blockWorkerWg.Done()
 			for blockHeight := range blockHeightChan {
-				// fmt.Println(1, blockHeight)
 				res, err := GetBlockWithTxReceipts(client, blockHeight)
 				if err != nil {
 					log.Println("Error getting block with tx receipts:", err)
