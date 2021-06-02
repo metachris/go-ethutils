@@ -5,7 +5,10 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"math/big"
 	"os"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/ethereum/go-ethereum/core/types"
@@ -20,6 +23,19 @@ func perror(err error) {
 	}
 }
 
+const (
+	InfoColor    = "\033[1;34m%s\033[0m"
+	NoticeColor  = "\033[1;36m%s\033[0m"
+	WarningColor = "\033[1;33m%s\033[0m"
+	ErrorColor   = "\033[1;31m%s\033[0m"
+	DebugColor   = "\033[0;36m%s\033[0m"
+)
+
+func colorPrintf(color string, format string, a ...interface{}) {
+	str := fmt.Sprintf(format, a...)
+	fmt.Printf(string(color), str)
+}
+
 func main() {
 	blockHeightPtr := flag.Int("block", 0, "specific block to check")
 	datePtr := flag.String("date", "", "date (yyyy-mm-dd or -1d)")
@@ -32,10 +48,12 @@ func main() {
 	client, err := ethclient.Dial(os.Getenv("ETH_NODE"))
 	perror(err)
 
-	if len(*datePtr) != 0 || *blockHeightPtr != 0 {
+	if *datePtr != "" || *blockHeightPtr != 0 {
 		// A start for historical analysis was given
 		// log.Fatal("Missing start (date or block). Add with -date <yyyy-mm-dd> or -block <blockNum>")
-		processHistoricBlocks(*blockHeightPtr, *datePtr, *hourPtr, *minPtr, *lenPtr)
+		startBlock, endBlock := getBlockRangeFromArguments(client, *blockHeightPtr, *datePtr, *hourPtr, *minPtr, *lenPtr)
+		// fmt.Println(startBlock, endBlock)
+		checkBlocks(client, startBlock, endBlock)
 	}
 
 	if *watchPtr {
@@ -44,71 +62,111 @@ func main() {
 
 }
 
-func processHistoricBlocks(blockHeight int, date string, hour int, min int, len string) {
-	// // Parse -len argument (can be either 1s, 5m, 2h or 4d, or without suffix a number of blocks)
-	// numBlocks := 1
-	// timespanSec := 0
-	// switch {
-	// case strings.HasSuffix(*lenPtr, "s"):
-	// 	timespanSec, _ = strconv.Atoi(strings.TrimSuffix(*lenPtr, "s"))
-	// case strings.HasSuffix(*lenPtr, "m"):
-	// 	timespanSec, _ = strconv.Atoi(strings.TrimSuffix(*lenPtr, "m"))
-	// 	timespanSec *= 60
-	// case strings.HasSuffix(*lenPtr, "h"):
-	// 	timespanSec, _ = strconv.Atoi(strings.TrimSuffix(*lenPtr, "h"))
-	// 	timespanSec *= 60 * 60
-	// case strings.HasSuffix(*lenPtr, "d"):
-	// 	timespanSec, _ = strconv.Atoi(strings.TrimSuffix(*lenPtr, "d"))
-	// 	timespanSec *= 60 * 60 * 24
-	// case len(*lenPtr) == 0:
-	// 	numBlocks = 1
-	// default:
-	// 	// No suffix: number of blocks
-	// 	numBlocks, _ = strconv.Atoi(*lenPtr)
-	// }
-
-	// startBlockHeight := int64(*blockHeightPtr)
-	// var startTimestamp int64
-	// var startTime time.Time
-
-	// // if *blockHeightPtr > 0 { // start at timestamp
-	// // 	startBlockHeader, err := client.HeaderByNumber(context.Background(), big.NewInt(int64(*blockHeightPtr)))
-	// // 	core.Perror(err)
-	// // 	startTimestamp = int64(startBlockHeader.Time)
-	// // 	startTime = time.Unix(startTimestamp, 0)
-
-	// // startHeight := int64(*blockHeightPtr)
-	// // endHeight := startHeight + int64(numBlocks) - 1
-	// // checkBlocks(startHeight, endHeight)
-}
-
-func checkBlocks(startHeight int64, endHeight int64) {
-	client, err := ethclient.Dial(os.Getenv("ETH_NODE"))
-	perror(err)
-
-	processBlockWithReceipts := func(b *blockswithtx.BlockWithTxReceipts) {
-		// fmt.Println("block", b.Block.Number(), "\t receipts:", len(b.TxReceipts))
-		for _, tx := range b.Block.Transactions() {
-			receipt := b.TxReceipts[tx.Hash()]
-			if receipt == nil {
-				continue
-			}
-			if receipt.Status == 1 {
-				continue
-			}
-
-			// Failed transaction
-			if len(tx.Data()) == 0 {
-				sender, _ := utils.GetTxSender(tx)
-				fmt.Printf("Failed Flashbots tx in block %v: %s from %v\n", b.Block.Number(), tx.Hash(), sender)
-			}
-		}
+func getBlockRangeFromArguments(client *ethclient.Client, blockHeight int, date string, hour int, min int, length string) (startBlock int64, endBlock int64) {
+	if date != "" && blockHeight != 0 {
+		panic("cannot use both -block and -date arguments")
 	}
 
+	if date == "" && blockHeight == 0 {
+		panic("need to use either -block or -date arguments")
+	}
+
+	// Parse -len argument. Can be either a number of blocks or a time duration (eg. 1s, 5m, 2h or 4d)
+	numBlocks := 0
+	timespanSec := 0
+	var err error
+	switch {
+	case strings.HasSuffix(length, "s"):
+		timespanSec, err = strconv.Atoi(strings.TrimSuffix(length, "s"))
+		perror(err)
+	case strings.HasSuffix(length, "m"):
+		timespanSec, err = strconv.Atoi(strings.TrimSuffix(length, "m"))
+		perror(err)
+		timespanSec *= 60
+	case strings.HasSuffix(length, "h"):
+		timespanSec, err = strconv.Atoi(strings.TrimSuffix(length, "h"))
+		perror(err)
+		timespanSec *= 60 * 60
+	case strings.HasSuffix(length, "d"):
+		timespanSec, err = strconv.Atoi(strings.TrimSuffix(length, "d"))
+		perror(err)
+		timespanSec *= 60 * 60 * 24
+	case length == "": // default 1 block
+		numBlocks = 1
+	default: // No suffix: number of blocks
+		numBlocks, err = strconv.Atoi(length)
+		perror(err)
+	}
+
+	// startTime is set from date argument, or block timestamp if -block argument was used
+	var startTime time.Time
+
+	// Get start block
+	if blockHeight > 0 { // start at block height
+		startBlockHeader, err := client.HeaderByNumber(context.Background(), big.NewInt(int64(blockHeight)))
+		perror(err)
+		startBlock = startBlockHeader.Number.Int64()
+		startTime = time.Unix(int64(startBlockHeader.Time), 0)
+	} else {
+		// Negative date prefix (-1d, -2m, -1y)
+		if strings.HasPrefix(date, "-") {
+			if strings.HasSuffix(date, "d") {
+				t := time.Now().AddDate(0, 0, -1)
+				startTime = t.Truncate(24 * time.Hour)
+			} else if strings.HasSuffix(date, "m") {
+				t := time.Now().AddDate(0, -1, 0)
+				startTime = t.Truncate(24 * time.Hour)
+			} else if strings.HasSuffix(date, "y") {
+				t := time.Now().AddDate(-1, 0, 0)
+				startTime = t.Truncate(24 * time.Hour)
+			} else {
+				panic(fmt.Sprintf("Not a valid date offset: %s", date))
+			}
+		} else {
+			startTime, err = utils.DateToTime(date, hour, min, 0)
+			perror(err)
+		}
+
+		startBlockHeader, err := utils.GetFirstBlockHeaderAtOrAfterTime(client, startTime)
+		perror(err)
+		startBlock = startBlockHeader.Number.Int64()
+	}
+
+	if numBlocks > 0 {
+		endBlock = startBlock + int64(numBlocks-1)
+	} else if timespanSec > 0 {
+		endTime := startTime.Add(time.Duration(timespanSec) * time.Second)
+		// fmt.Printf("endTime: %v\n", endTime.UTC())
+		endBlockHeader, _ := utils.GetFirstBlockHeaderAtOrAfterTime(client, endTime)
+		endBlock = endBlockHeader.Number.Int64() - 1
+	} else {
+		panic("No valid block range")
+	}
+
+	if endBlock < startBlock {
+		endBlock = startBlock
+	}
+
+	return startBlock, endBlock
+}
+
+func checkBlocks(client *ethclient.Client, startHeight int64, endHeight int64) {
+	fmt.Printf("Checking blocks %d to %d...\n", startHeight, endHeight)
 	t1 := time.Now()
-	blockswithtx.GetBlocksWithTxReceipts(client, processBlockWithReceipts, startHeight, endHeight, 5)
+	blockChan := make(chan *blockswithtx.BlockWithTxReceipts, 100) // channel for resulting BlockWithTxReceipt
+
+	// Start thread listening for blocks (with tx receipts) from geth worker pool
+	var numTx uint64
+	go func() {
+		for b := range blockChan {
+			checkBlockWithReceipts(b)
+			numTx += uint64(len(b.Block.Transactions()))
+		}
+	}()
+
+	blockswithtx.GetBlocksWithTxReceipts(client, blockChan, startHeight, endHeight, 5)
 	t2 := time.Since(t1)
-	fmt.Println("Processed", endHeight-startHeight, "blocks in", t2.Seconds(), "sec")
+	fmt.Printf("Processed %d blocks (%d transactions) in %.3f seconds\n", endHeight-startHeight, numTx, t2.Seconds())
 }
 
 func watch(client *ethclient.Client) {
@@ -130,20 +188,22 @@ func watch(client *ethclient.Client) {
 	}
 }
 
-func checkBlockWithReceipts(b blockswithtx.BlockWithTxReceipts) {
-	fmt.Println("block", b.Block.Number(), "\t receipts:", len(b.TxReceipts))
+func checkBlockWithReceipts(b *blockswithtx.BlockWithTxReceipts) {
+	// fmt.Printf("block %v: %d tx\n", b.Block.Number(), len(b.Block.Transactions()))
+	utils.PrintBlock(b.Block)
 	for _, tx := range b.Block.Transactions() {
 		receipt := b.TxReceipts[tx.Hash()]
 		if receipt == nil {
 			continue
 		}
 
-		if tx.GasPrice().Uint64() == 0 && len(tx.Data()) > 0 {
+		if utils.IsBigIntZero(tx.GasPrice()) && len(tx.Data()) > 0 {
 			sender, _ := utils.GetTxSender(tx)
 			if receipt.Status == 1 { // successful tx
 				// fmt.Printf("Flashbots tx in block %v: %s from %v\n", b.Block.Number(), tx.Hash(), sender)
 			} else { // failed tx
-				fmt.Printf("Failed Flashbots tx in block %v: %s from %v\n", b.Block.Number(), tx.Hash(), sender)
+				// fmt.Printf("block %v: failed Flashbots tx %s from %v\n", WarningColor, b.Block.Number(), tx.Hash(), sender)
+				colorPrintf(ErrorColor, "block %v: failed Flashbots tx %s from %v\n", b.Block.Number(), tx.Hash(), sender)
 			}
 		}
 	}

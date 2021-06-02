@@ -23,9 +23,22 @@ func IsBigIntZero(n *big.Int) bool {
 	return len(n.Bits()) == 0
 }
 
+func PrintBlock(block *types.Block) {
+	t := time.Unix(int64(block.Header().Time), 0).UTC()
+	fmt.Printf("%d \t %s \t tx=%-4d \t gas=%d\n", block.Header().Number, t, len(block.Transactions()), block.GasUsed())
+}
+
 func DateToTime(dayString string, hour int, min int, sec int) (time.Time, error) {
 	dateString := fmt.Sprintf("%sT%02d:%02d:%02dZ", dayString, hour, min, sec)
 	return time.Parse(time.RFC3339, dateString)
+}
+
+func GetTxSender(tx *types.Transaction) (from common.Address, err error) {
+	from, err = types.Sender(types.NewEIP155Signer(tx.ChainId()), tx)
+	if err != nil {
+		from, err = types.Sender(types.HomesteadSigner{}, tx)
+	}
+	return from, err
 }
 
 // Roughly estimate a block number by target timestamp (might be off by a lot)
@@ -39,14 +52,6 @@ func EstimateTargetBlocknumber(utcTimestamp int64) int64 {
 	blocksDiff := secDiff / 13
 	targetBlock := referenceBlockNumber - blocksDiff
 	return targetBlock
-}
-
-func GetTxSender(tx *types.Transaction) (from common.Address, err error) {
-	from, err = types.Sender(types.NewEIP155Signer(tx.ChainId()), tx)
-	if err != nil {
-		from, err = types.Sender(types.HomesteadSigner{}, tx)
-	}
-	return from, err
 }
 
 // GetBlockHeaderAtTimestamp returns the header of the first block at or after the timestamp. If timestamp is after
@@ -86,7 +91,7 @@ func GetFirstBlockHeaderAtOrAfterTime(client *ethclient.Client, targetTime time.
 		return false
 	}
 
-	fmt.Printf("Finding start block:\n")
+	// fmt.Printf("Finding start block:\n")
 	var secDiff int64
 	blockSecAvg := int64(13) // average block time. is adjusted when narrowing down
 
@@ -100,12 +105,12 @@ func GetFirstBlockHeaderAtOrAfterTime(client *ethclient.Client, targetTime time.
 
 		secDiff = int64(header.Time) - targetTimestamp
 
-		fmt.Printf("%d \t blockTime: %d / %v \t secDiff: %5d\n", currentBlockNumber, header.Time, time.Unix(int64(header.Time), 0).UTC(), secDiff)
+		// fmt.Printf("%d \t blockTime: %d / %v \t secDiff: %5d\n", currentBlockNumber, header.Time, time.Unix(int64(header.Time), 0).UTC(), secDiff)
 
 		// Check if this secDiff was already seen (avoid circular endless loop)
 		if lastSecDiffsIncludes(secDiff) && blockSecAvg < 25 {
 			blockSecAvg += 1
-			fmt.Println("- Increase blockSecAvg to", blockSecAvg)
+			// fmt.Println("- Increase blockSecAvg to", blockSecAvg)
 		}
 
 		// Pop & add secDiff to array of last values
