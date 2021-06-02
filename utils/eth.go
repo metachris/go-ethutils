@@ -33,7 +33,7 @@ func EstimateTargetBlocknumber(utcTimestamp int64) int64 {
 }
 
 // GetBlockHeaderAtTimestamp returns the header of the first block at or after the timestamp. If timestamp is after
-// latest block, then return latest block.
+// latest block, then return latest block. This function is a bit messy, but works. Improvements to this approach are welcome.
 func GetFirstBlockHeaderAtOrAfterTime(client *ethclient.Client, targetTime time.Time) (header *types.Header, err error) {
 	// Get latest header
 	latestBlockHeader, err := client.HeaderByNumber(context.Background(), nil)

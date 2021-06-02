@@ -1,3 +1,4 @@
+// Get blocks with receipts from a geth node, as fast as possible (concurrent)
 package blockswithtx
 
 import (
@@ -47,8 +48,8 @@ func GetBlockWithTxReceipts(client *ethclient.Client, height int64) (res *BlockW
 	return res, nil
 }
 
-// GetBlocksWithTxReceipts downloads a range of blocks with tx receipts and sends them to a user-defined function for processing
-// Uses concurrency parallel connections to get data from the eth node fast. 5 is usually a good number for a direct IPC connection.
+// GetBlocksWithTxReceipts downloads a range of blocks with tx receipts, and sends each to a channel once it is ready.
+// Uses concurrency parallel connections to get data from the eth node fast. 5 seems a good number for a direct IPC connection.
 func GetBlocksWithTxReceipts(client *ethclient.Client, blockChan chan<- *BlockWithTxReceipts, startBlock int64, endBlock int64, concurrency int) {
 	var blockWorkerWg sync.WaitGroup
 	blockHeightChan := make(chan int64, 100) // blockHeight to fetch with receipts
