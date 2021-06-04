@@ -11,6 +11,10 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
+var (
+	ErrTargetTimestampAfterLatestBlock = errors.New("target timestamp after latest block")
+)
+
 func GetTxSender(tx *types.Transaction) (from common.Address, err error) {
 	from, err = types.Sender(types.NewEIP155Signer(tx.ChainId()), tx)
 	if err != nil {
@@ -44,7 +48,7 @@ func GetFirstBlockHeaderAtOrAfterTime(client *ethclient.Client, targetTime time.
 	// Ensure target timestamp is before latest block
 	targetTimestamp := targetTime.Unix()
 	if uint64(targetTimestamp) > latestBlockHeader.Time {
-		return header, errors.New("target timestamp after latest block")
+		return header, ErrTargetTimestampAfterLatestBlock
 	}
 
 	// Estimate a target block number
