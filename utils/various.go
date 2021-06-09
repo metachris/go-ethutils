@@ -2,12 +2,27 @@ package utils
 
 import (
 	"fmt"
+	"math"
 	"math/big"
 	"strings"
 	"time"
 
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/metachris/go-ethutils/addressdetail"
 )
+
+const (
+	InfoColor    = "\033[1;34m%s\033[0m"
+	NoticeColor  = "\033[1;36m%s\033[0m"
+	WarningColor = "\033[1;33m%s\033[0m"
+	ErrorColor   = "\033[1;31m%s\033[0m"
+	DebugColor   = "\033[0;36m%s\033[0m"
+)
+
+func ColorPrintf(color string, format string, a ...interface{}) {
+	str := fmt.Sprintf(format, a...)
+	fmt.Printf(string(color), str)
+}
 
 func Perror(err error) {
 	if err != nil {
@@ -94,15 +109,12 @@ func NumberToHumanReadableString(value interface{}, decimals int) string {
 	}
 }
 
-const (
-	InfoColor    = "\033[1;34m%s\033[0m"
-	NoticeColor  = "\033[1;36m%s\033[0m"
-	WarningColor = "\033[1;33m%s\033[0m"
-	ErrorColor   = "\033[1;31m%s\033[0m"
-	DebugColor   = "\033[0;36m%s\033[0m"
-)
+func GetErc20TokensInUnit(numTokens *big.Int, addrDetail addressdetail.AddressDetail) (amount *big.Float, symbol string) {
+	tokensFloat := new(big.Float).SetInt(numTokens)
 
-func ColorPrintf(color string, format string, a ...interface{}) {
-	str := fmt.Sprintf(format, a...)
-	fmt.Printf(string(color), str)
+	decimals := int(addrDetail.Decimals)
+	divider := math.Pow10(decimals)
+
+	amount = new(big.Float).Quo(tokensFloat, big.NewFloat(divider))
+	return amount, addrDetail.Symbol
 }

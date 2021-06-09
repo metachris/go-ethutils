@@ -1,4 +1,4 @@
-package smartcontracts
+package addressdetail
 
 import "fmt"
 

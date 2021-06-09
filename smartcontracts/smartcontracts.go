@@ -8,6 +8,7 @@ import (
 	"github.com/metachris/eth-go-bindings/erc165"
 	"github.com/metachris/eth-go-bindings/erc20"
 	"github.com/metachris/eth-go-bindings/erc721"
+	"github.com/metachris/go-ethutils/addressdetail"
 )
 
 func IsContract(address string, client *ethclient.Client) (isContract bool, err error) {
@@ -29,7 +30,7 @@ func SmartContractSupportsInterface(address string, interfaceId [4]byte, client 
 // TODO: Currently returns true for every SC that supports INTERFACEID_ERC165. It should really be INTERFACEID_ERC721,
 // but that doesn't detect some SCs, eg. cryptokitties https://etherscan.io/address/0x06012c8cf97BEaD5deAe237070F9587f8E7A266d#readContract
 // As a quick fix, just checks ERC165 and count it as ERC721 address. Improve with further/better SC method checks.
-func IsErc721(address string, client *ethclient.Client) (isErc721 bool, detail AddressDetail, err error) {
+func IsErc721(address string, client *ethclient.Client) (isErc721 bool, detail addressdetail.AddressDetail, err error) {
 	detail.Address = address
 
 	addr := common.HexToAddress(address)
@@ -44,7 +45,7 @@ func IsErc721(address string, client *ethclient.Client) (isErc721 bool, detail A
 	}
 
 	// It appears to be ERC721
-	detail.Type = AddressTypeErc721
+	detail.Type = addressdetail.AddressTypeErc721
 
 	// Try to get a name and symbol
 	detail.Name, _ = instance.Name(nil)
@@ -61,7 +62,7 @@ func IsErc721(address string, client *ethclient.Client) (isErc721 bool, detail A
 	return true, detail, nil
 }
 
-func IsErc20(address string, client *ethclient.Client) (isErc20 bool, detail AddressDetail, err error) {
+func IsErc20(address string, client *ethclient.Client) (isErc20 bool, detail addressdetail.AddressDetail, err error) {
 	detail.Address = address
 	addr := common.HexToAddress(address)
 	instance, err := erc20.NewErc20(addr, client)
@@ -92,12 +93,12 @@ func IsErc20(address string, client *ethclient.Client) (isErc20 bool, detail Add
 		return false, detail, err
 	}
 
-	detail.Type = AddressTypeErc20
+	detail.Type = addressdetail.AddressTypeErc20
 	return true, detail, nil
 }
 
-func GetAddressDetailFromBlockchain(address string, client *ethclient.Client) (detail AddressDetail, found bool, err error) {
-	detail = NewAddressDetail(address)
+func GetAddressDetailFromBlockchain(address string, client *ethclient.Client) (detail addressdetail.AddressDetail, found bool, err error) {
+	detail = addressdetail.NewAddressDetail(address)
 
 	// check fr erc721
 	isErc721, detail, err := IsErc721(address, client)
@@ -123,11 +124,11 @@ func GetAddressDetailFromBlockchain(address string, client *ethclient.Client) (d
 		return detail, found, err
 	}
 	if isContract {
-		detail.Type = AddressTypeOtherContract
+		detail.Type = addressdetail.AddressTypeOtherContract
 		return detail, true, nil
 	}
 
 	// return just a wallet
-	detail.Type = AddressTypeWallet
+	detail.Type = addressdetail.AddressTypeWallet
 	return detail, false, nil
 }
