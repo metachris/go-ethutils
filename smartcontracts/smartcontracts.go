@@ -97,38 +97,26 @@ func IsErc20(address string, client *ethclient.Client) (isErc20 bool, detail add
 	return true, detail, nil
 }
 
-func GetAddressDetailFromBlockchain(address string, client *ethclient.Client) (detail addressdetail.AddressDetail, found bool, err error) {
+func GetAddressDetailFromBlockchain(address string, client *ethclient.Client) (detail addressdetail.AddressDetail, found bool) {
 	detail = addressdetail.NewAddressDetail(address)
 
-	// check fr erc721
-	isErc721, detail, err := IsErc721(address, client)
-	if err != nil {
-		return detail, found, err
-	}
-	if isErc721 {
-		return detail, true, nil
+	// check for erc721
+	if isErc721, detail, _ := IsErc721(address, client); isErc721 {
+		return detail, true
 	}
 
 	// check for erc20
-	isErc20, detail, err := IsErc20(address, client)
-	if err != nil {
-		return detail, found, err
-	}
-	if isErc20 {
-		return detail, true, nil
+	if isErc20, detail, _ := IsErc20(address, client); isErc20 {
+		return detail, true
 	}
 
 	// check if any type of smart contract
-	isContract, err := IsContract(address, client)
-	if err != nil {
-		return detail, found, err
-	}
-	if isContract {
+	if isContract, _ := IsContract(address, client); isContract {
 		detail.Type = addressdetail.AddressTypeOtherContract
-		return detail, true, nil
+		return detail, true
 	}
 
 	// return just a wallet
 	detail.Type = addressdetail.AddressTypeWallet
-	return detail, false, nil
+	return detail, false
 }
