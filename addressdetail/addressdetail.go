@@ -1,3 +1,4 @@
+// Simple data type for an address or smart contract
 package addressdetail
 
 import "fmt"

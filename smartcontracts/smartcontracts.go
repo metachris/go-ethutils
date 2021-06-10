@@ -1,3 +1,4 @@
+// Detect smart contract properties
 package smartcontracts
 
 import (
@@ -97,6 +98,8 @@ func IsErc20(address string, client *ethclient.Client) (isErc20 bool, detail add
 	return true, detail, nil
 }
 
+// GetAddressDetailFromBlockchain tries to detect an ERC20 / ERC721 token or generic smart contract, and returns an addressdetail.AddressDetail
+// with the received details.
 func GetAddressDetailFromBlockchain(address string, client *ethclient.Client) (detail addressdetail.AddressDetail, found bool) {
 	detail = addressdetail.NewAddressDetail(address)
 

@@ -9,7 +9,7 @@ Helpers for working with Ethereum:
 
 **Contents**
 
-* [blockswithtx](https://github.com/metachris/go-ethutils/blob/master/blockswithtx/main.go) - fast, concurrent block+receipts downloading pipeline (use a geth IPC connection)
+* [blockswithtx](https://github.com/metachris/go-ethutils/blob/master/blockswithtx) - fast, concurrent block+receipts downloading pipeline (use a geth IPC connection)
 * [smartcontracts](https://github.com/metachris/go-ethutils/blob/master/smartcontracts) - detect types of smart contracts
 * [addressdetail](https://github.com/metachris/go-ethutils/blob/master/addressdetail) - helper type for smart contracts and addresses
 * [utils/eth.go](https://github.com/metachris/go-ethutils/blob/master/utils/eth.go) - finding first block at or after a certain UTC timestamp
