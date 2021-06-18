@@ -120,6 +120,6 @@ func GetAddressDetailFromBlockchain(address string, client *ethclient.Client) (d
 	}
 
 	// return just a wallet
-	detail.Type = addressdetail.AddressTypeWallet
+	detail.Type = addressdetail.AddressTypeEOA
 	return detail, false
 }
