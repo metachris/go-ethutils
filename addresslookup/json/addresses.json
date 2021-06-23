@@ -1,0 +1,77 @@
+[
+    {
+        "name": "Binance",
+        "address": "0x3f5CE5FBFe3E9af3971dD833D26bA9b5C936f0bE"
+    },
+    {
+        "name": "Binance",
+        "address": "0x28C6c06298d514Db089934071355E5743bf21d60"
+    },
+    {
+        "name": "Binance",
+        "address": "0xD551234Ae421e3BCBA99A0Da6d736074f22192FF"
+    },
+    {
+        "name": "Binance",
+        "address": "0x21a31Ee1afC51d94C2eFcCAa2092aD1028285549"
+    },
+    {
+        "name": "Binance",
+        "address": "0x85b931A32a0725Be14285B66f1a22178c672d69B"
+    },
+    {
+        "name": "Kraken",
+        "address": "0xFa52274DD61E1643d2205169732f29114BC240b3"
+    },
+    {
+        "name": "Kraken",
+        "address": "0x267be1C1D684F78cb4F6a176C4911b741E4Ffdc0"
+    },
+    {
+        "name": "Bitfinex",
+        "address": "0x876EabF441B2EE5B5b0554Fd502a8E0600950cFa"
+    },
+    {
+        "name": "Bitfinex",
+        "address": "0x742d35Cc6634C0532925a3b844Bc454e4438f44e"
+    },
+    {
+        "name": "BitMart",
+        "address": "0x68b22215FF74E3606BD5E6c1DE8c2D68180c85F7"
+    },
+    {
+        "name": "FTX",
+        "address": "0x2FAF487A4414Fe77e2327F0bf4AE2a264a776AD2"
+    },
+    {
+        "name": "FTX",
+        "address": "0xC098B2a3Aa256D2140208C3de6543aAEf5cd3A94"
+    },
+    {
+        "name": "OKEx",
+        "address": "0xA7EFAe728D2936e78BDA97dc267687568dD593f3"
+    },
+    {
+        "name": "F2Pool",
+        "address": "0xF20b338752976878754518183873602902360704"
+    },
+    {
+        "name": "F2Pool Old",
+        "address": "0x829bd824b016326a401d083b33d092293333a830"
+    },
+    {
+        "name": "F2Pool Old",
+        "address": "0x61C808D82A3Ac53231750daDc13c777b59310bD9"
+    },
+    {
+        "name": "MetaMask Dex",
+        "type": "OtherContract",
+        "address": "0x881D40237659C251811CEC9c364ef91dC08D300C",
+        "decimals": 18
+    },
+    {
+        "name": "Eth2 Depositor",
+        "type": "OtherContract",
+        "address": "0x27D71A464Da941118A4E056D0737274aA308a923"
+    }
+]
