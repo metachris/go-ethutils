@@ -5,7 +5,7 @@ Helpers for working with Ethereum:
 **Links**
 
 * Docs: https://pkg.go.dev/github.com/metachris/go-ethutils
-* Example usage: https://github.com/metachris/flashbots-failed-tx
+* Example usage: https://github.com/metachris/flashbots
 
 **Contents**
 
@@ -18,7 +18,7 @@ Helpers for working with Ethereum:
 
 **Feedback**
 
-* Please reach out to [twitter.com/metachris](https://twitter.com/metachris)
+* Reach out to [twitter.com/metachris](https://twitter.com/metachris)
 
 ---
 

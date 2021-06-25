@@ -16,17 +16,11 @@ type AddressLookupService struct {
 	Cache map[string]addressdetail.AddressDetail
 }
 
-func NewAddressLookupService(client *ethclient.Client) (*AddressLookupService, error) {
-	// Cache starts with data from default JSON
-	// data, err := GetAddressDetailMap(nil)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
+func NewAddressLookupService(client *ethclient.Client) *AddressLookupService {
 	return &AddressLookupService{
 		Client: client,
 		Cache:  make(map[string]addressdetail.AddressDetail),
-	}, nil
+	}
 }
 
 func (ads *AddressLookupService) EnsureIsLoaded(a *addressdetail.AddressDetail) {

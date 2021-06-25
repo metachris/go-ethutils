@@ -13,8 +13,7 @@ func main() {
 	client, err := ethclient.Dial(os.Getenv("ETH_NODE"))
 	utils.Perror(err)
 
-	addressLookup, err := addresslookup.NewAddressLookupService(client)
-	utils.Perror(err)
+	addressLookup := addresslookup.NewAddressLookupService(client)
 
 	err = addressLookup.AddAddressFromDefaultJson()
 	utils.Perror(err)
