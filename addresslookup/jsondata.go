@@ -3,7 +3,6 @@ package addresslookup
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -19,7 +18,6 @@ var JsonUrlEtherscanTopminers string = "https://metachris.github.io/go-ethutils/
 // var JsonFilenameAddresses string = "addresslookup/json/addresses.json"
 
 func GetAddressesFromJsonUrl(url string) (details []addressdetail.AddressDetail, err error) {
-	fmt.Println("x", url)
 	resp, err := http.Get(url)
 	if err != nil {
 		return details, err
