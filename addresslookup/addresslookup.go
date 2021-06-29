@@ -1,6 +1,7 @@
 package addresslookup
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -87,19 +88,19 @@ func (ads *AddressLookupService) AddAddressesFromJsonUrl(url string) error {
 	return nil
 }
 
-func (ads *AddressLookupService) AddAddressesFromDefaultJsonUrl() error {
-	return ads.AddAddressesFromJsonUrl(JsonUrlAddresses)
-}
-
 func (ads *AddressLookupService) AddAllAddresses() error {
-	err := ads.AddAddressesFromJsonUrl(JsonUrlAddresses)
-	if err != nil {
-		return err
+	jsonUrls := []string{
+		JsonUrlAddresses,
+		JsonUrlEtherscanTopminers,
+		JsonUrlEthplorerExchangeAddresses,
 	}
 
-	err = ads.AddAddressesFromJsonUrl(JsonUrlEthplorerExchangeAddresses)
-	if err != nil {
-		return err
+	for _, url := range jsonUrls {
+		fmt.Println(url)
+		err := ads.AddAddressesFromJsonUrl(url)
+		if err != nil {
+			return errors.New(err.Error() + " - " + url)
+		}
 	}
 
 	return nil

@@ -3,6 +3,7 @@ package addresslookup
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -13,9 +14,12 @@ import (
 
 var JsonUrlAddresses string = "https://metachris.github.io/go-ethutils/addresslookup/json/addresses.json"
 var JsonUrlEthplorerExchangeAddresses string = "https://metachris.github.io/go-ethutils/addresslookup/json/ethplorer-exchanges.json"
-var JsonFilenameAddresses string = "addresslookup/json/addresses.json"
+var JsonUrlEtherscanTopminers string = "https://metachris.github.io/go-ethutils/addresslookup/json/topminers-etherscan.json"
+
+// var JsonFilenameAddresses string = "addresslookup/json/addresses.json"
 
 func GetAddressesFromJsonUrl(url string) (details []addressdetail.AddressDetail, err error) {
+	fmt.Println("x", url)
 	resp, err := http.Get(url)
 	if err != nil {
 		return details, err
@@ -56,12 +60,8 @@ func GetAddressesFromJsonFile(filename string) (details []addressdetail.AddressD
 	return addressDetails, nil
 }
 
-func GetAddressDetailMap(filename *string) (ret map[string]addressdetail.AddressDetail, err error) {
-	if filename == nil {
-		filename = &JsonFilenameAddresses
-	}
-
-	list, err := GetAddressesFromJsonFile(*filename)
+func GetAddressDetailMap(filename string) (ret map[string]addressdetail.AddressDetail, err error) {
+	list, err := GetAddressesFromJsonFile(filename)
 	if err != nil {
 		return ret, err
 	}

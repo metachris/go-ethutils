@@ -12,10 +12,10 @@ import (
 func main() {
 	ethNodeUri := os.Getenv("ETH_NODE")
 	client, err := ethclient.Dial(ethNodeUri)
-	utils.Perror(err)
+	// utils.Perror(err)
 	addressLookup := addresslookup.NewAddressLookupService(client)
 
-	err = addressLookup.AddAddressesFromDefaultJsonUrl()
+	err = addressLookup.AddAllAddresses()
 	utils.Perror(err)
 
 	a, f := addressLookup.GetAddressDetail("0x3ecef08d0e2dad803847e052249bb4f8bff2d5bb") // MiningPoolHub
