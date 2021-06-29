@@ -15,7 +15,7 @@ func main() {
 
 	addressLookup := addresslookup.NewAddressLookupService(client)
 
-	err = addressLookup.AddAddressFromDefaultJson()
+	err = addressLookup.AddAddressesFromDefaultJsonUrl()
 	utils.Perror(err)
 
 	a, f := addressLookup.GetAddressDetail("0x3ecef08d0e2dad803847e052249bb4f8bff2d5bb") // MiningPoolHub
