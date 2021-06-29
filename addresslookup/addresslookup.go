@@ -7,6 +7,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/metachris/go-ethutils/addressdetail"
 	"github.com/metachris/go-ethutils/smartcontracts"
+	"github.com/metachris/go-ethutils/utils"
 )
 
 type AddressLookupService struct {
@@ -79,11 +80,27 @@ func (ads *AddressLookupService) AddAddressesFromJsonUrl(url string) error {
 		return err
 	}
 
-	fmt.Printf("adding %d entries from %s\n", len(details), url)
+	if utils.DebugEnabled {
+		fmt.Printf("adding %d entries from %s\n", len(details), url)
+	}
 	ads.AddAddressDetailsToCache(details)
 	return nil
 }
 
 func (ads *AddressLookupService) AddAddressesFromDefaultJsonUrl() error {
 	return ads.AddAddressesFromJsonUrl(JsonUrlAddresses)
+}
+
+func (ads *AddressLookupService) AddAllAddresses() error {
+	err := ads.AddAddressesFromJsonUrl(JsonUrlAddresses)
+	if err != nil {
+		return err
+	}
+
+	err = ads.AddAddressesFromJsonUrl(JsonUrlEthplorerExchangeAddresses)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

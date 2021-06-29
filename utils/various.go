@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"math/big"
+	"os"
 	"strings"
 	"time"
 
@@ -18,6 +19,8 @@ const (
 	ErrorColor   = "\033[1;31m%s\033[0m"
 	DebugColor   = "\033[0;36m%s\033[0m"
 )
+
+var DebugEnabled bool = os.Getenv("DEBUG") != ""
 
 func ColorPrintf(color string, format string, a ...interface{}) {
 	str := fmt.Sprintf(format, a...)
