@@ -10,9 +10,9 @@ import (
 )
 
 func main() {
-	client, err := ethclient.Dial(os.Getenv("ETH_NODE"))
+	ethNodeUri := os.Getenv("ETH_NODE")
+	client, err := ethclient.Dial(ethNodeUri)
 	utils.Perror(err)
-
 	addressLookup := addresslookup.NewAddressLookupService(client)
 
 	err = addressLookup.AddAddressesFromDefaultJsonUrl()
@@ -25,5 +25,11 @@ func main() {
 	fmt.Println(f, a)
 
 	a, f = addressLookup.GetAddressDetail("0x21a31Ee1afC51d94C2eFcCAa2092aD1028285549") // Binance
+	fmt.Println(f, a)
+
+	err = addressLookup.AddAddressesFromJsonUrl(addresslookup.JsonUrlEthplorerExchangeAddresses)
+	utils.Perror(err)
+
+	a, f = addressLookup.GetAddressDetail("0x2b5634c42055806a59e9107ed44d43c426e58258") // KuCoin
 	fmt.Println(f, a)
 }
