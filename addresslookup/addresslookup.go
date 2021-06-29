@@ -96,7 +96,6 @@ func (ads *AddressLookupService) AddAllAddresses() error {
 	}
 
 	for _, url := range jsonUrls {
-		fmt.Println(url)
 		err := ads.AddAddressesFromJsonUrl(url)
 		if err != nil {
 			return errors.New(err.Error() + " - " + url)
