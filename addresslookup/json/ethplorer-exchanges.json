@@ -498,8 +498,7 @@
         "name": "Bitzlato",
         "address": "0x00cdc153aa8894d08207719fe921fff964f28ba3",
         "source": "ethplorer"
-    }
-][
+    },
     {
         "name": "Gemini",
         "address": "0x6fc82a5fe25a5cdb58bc74600a40a69c065263f8",
@@ -999,8 +998,7 @@
         "name": "TAGZ",
         "address": "0xea3a46bd1dbd0620d80037f70d0bf7c7dc5a837c",
         "source": "ethplorer"
-    }
-][
+    },
     {
         "name": "Yunbi",
         "address": "0x42da8a05cb7ed9a43572b5ba1b8f82a0a6e263dc",
