@@ -85,5 +85,5 @@ func (ads *AddressLookupService) AddAddressesFromJsonUrl(url string) error {
 }
 
 func (ads *AddressLookupService) AddAddressesFromDefaultJsonUrl() error {
-	return ads.AddAddressesFromJsonUrl(URL_JSON_ADDRESSES)
+	return ads.AddAddressesFromJsonUrl(JsonUrlAddresses)
 }

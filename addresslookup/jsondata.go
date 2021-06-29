@@ -11,8 +11,9 @@ import (
 	"github.com/metachris/go-ethutils/addressdetail"
 )
 
-var URL_JSON_ADDRESSES string = "https://metachris.github.io/go-ethutils/addresslookup/json/addresses.json"
-var FN_JSON_ADDRESSES string = "addresslookup/json/addresses.json"
+var JsonUrlAddresses string = "https://metachris.github.io/go-ethutils/addresslookup/json/addresses.json"
+var JsonUrlEthplorerExchangeAddresses string = "https://metachris.github.io/go-ethutils/addresslookup/json/ethplorer-exchanges.json"
+var JsonFilenameAddresses string = "addresslookup/json/addresses.json"
 
 func GetAddressesFromJsonUrl(url string) (details []addressdetail.AddressDetail, err error) {
 	resp, err := http.Get(url)
@@ -57,7 +58,7 @@ func GetAddressesFromJsonFile(filename string) (details []addressdetail.AddressD
 
 func GetAddressDetailMap(filename *string) (ret map[string]addressdetail.AddressDetail, err error) {
 	if filename == nil {
-		filename = &FN_JSON_ADDRESSES
+		filename = &JsonFilenameAddresses
 	}
 
 	list, err := GetAddressesFromJsonFile(*filename)
