@@ -1,0 +1,70 @@
+[
+    {
+        "address": "0xea674fdde714fd979de3edf0f56aa9716b898ec8",
+        "name": "Ethermine"
+    },
+    {
+        "address": "0x5a0b54d5dc17e0aadc383d2db43b0a0d3e029c4c",
+        "name": "Spark Pool"
+    },
+    {
+        "address": "0x829bd824b016326a401d083b33d092293333a830",
+        "name": "F2Pool Old"
+    },
+    {
+        "address": "0x1ad91ee08f21be3de0ba2ba6918e714da6b45836",
+        "name": "Hiveon Pool"
+    },
+    {
+        "address": "0x99c85bb64564d9ef9a99621301f22c9993cb89e3",
+        "name": "BeePool"
+    },
+    {
+        "address": "0x52bc44d5378309ee2abf1539bf71de1b7d7be3b5",
+        "name": "Nanopool"
+    },
+    {
+        "address": "0x00192fb10df37c9fb26829eb2cc623cd1bf599e8",
+        "name": "2Miners: PPLNS"
+    },
+    {
+        "address": "0xd224ca0c819e8e97ba0136b3b95ceff503b79f53",
+        "name": "UUPool"
+    },
+    {
+        "address": "0x3ecef08d0e2dad803847e052249bb4f8bff2d5bb",
+        "name": "MiningPoolHub"
+    },
+    {
+        "address": "0xb3b7874f13387d44a3398d298b075b7a3505d8d4",
+        "name": "Babel Pool"
+    },
+    {
+        "address": "0x04668ec2f57cc15c381b461b9fedab5d451c8f7f",
+        "name": "zhizhu.top"
+    },
+    {
+        "address": "0x8595dd9e0438640b5e1254f9df579ac12a86865f",
+        "name": "EzilPool 2"
+    },
+    {
+        "address": "0x7f101fe45e6649a6fb8f3f8b43ed03d353f2b90c",
+        "name": "Flexpool.io"
+    },
+    {
+        "address": "0x002e08000acbbae2155fab7ac01929564949070d",
+        "name": "2Miners: SOLO"
+    },
+    {
+        "address": "0x1ca43b645886c98d7eb7d27ec16ea59f509cbe1a",
+        "name": "viabtc"
+    },
+    {
+        "address": "0x09ab1303d3ccaf5f018cd511146b07a240c70294",
+        "name": "Minerall Pool"
+    },
+    {
+        "address": "0xeea5b82b61424df8020f5fedd81767f2d0d25bfb",
+        "name": "BTC.com Pool"
+    }
+]
