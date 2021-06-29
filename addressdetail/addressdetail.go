@@ -11,7 +11,6 @@ const (
 	// After detection
 	AddressTypeErc20         AddressType = "Erc20"
 	AddressTypeErc721        AddressType = "Erc721"
-	AddressTypeErcToken      AddressType = "ErcToken"
 	AddressTypeOtherContract AddressType = "OtherContract"
 	AddressTypeEOA           AddressType = "EOA" // couldn't detect a smart contract, classify as Externally Owned Address (EOA)
 )
