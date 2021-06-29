@@ -64,6 +64,22 @@
         "address": "0x61C808D82A3Ac53231750daDc13c777b59310bD9"
     },
     {
+        "name": "Spark Pool",
+        "address": "0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c"
+    },
+    {
+        "name": "MiningPoolHub",
+        "address": "0x3EcEf08D0e2DaD803847E052249bb4F8bFf2D5bB"
+    },
+    {
+        "name": "Babel Pool",
+        "address": "0xB3b7874F13387D44a3398D298B075B7A3505D8d4 "
+    },
+    {
+        "name": "UUPool",
+        "address": "0xD224cA0c819e8E97ba0136B3b95ceFf503B79f53 "
+    },
+    {
         "name": "MetaMask Dex",
         "type": "OtherContract",
         "address": "0x881D40237659C251811CEC9c364ef91dC08D300C",

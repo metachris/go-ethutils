@@ -39,9 +39,8 @@ func (ads *AddressLookupService) EnsureIsLoaded(a *addressdetail.AddressDetail) 
 // GetAddressDetail returns the addressdetail.AddressDetail from JSON. If not exists then query the Blockchain and caches it for future use
 func (ads *AddressLookupService) GetAddressDetail(address string) (detail addressdetail.AddressDetail, found bool) {
 	// Check in Cache + JSON dataset
-	addr, found := ads.Cache[strings.ToLower(address)]
-	if found {
-		return addr, true
+	if detail, found := ads.Cache[strings.ToLower(address)]; found {
+		return detail, true
 	}
 
 	// Without connection, return Detail with just address
@@ -53,7 +52,6 @@ func (ads *AddressLookupService) GetAddressDetail(address string) (detail addres
 	// Look up in Blockchain and cache (no matter if found or not, to avoid unnecessary repeated calls)
 	detail, found = smartcontracts.GetAddressDetailFromBlockchain(address, ads.Client)
 	ads.AddAddressDetailToCache(detail)
-
 	return detail, found
 }
 
@@ -75,7 +73,7 @@ func (ads *AddressLookupService) ClearCache() {
 	ads.Cache = make(map[string]addressdetail.AddressDetail)
 }
 
-func (ads *AddressLookupService) AddAddressFromJson(url string) error {
+func (ads *AddressLookupService) AddAddressesFromJsonUrl(url string) error {
 	details, err := GetAddressesFromJsonUrl(url)
 	if err != nil {
 		return err
@@ -86,6 +84,6 @@ func (ads *AddressLookupService) AddAddressFromJson(url string) error {
 	return nil
 }
 
-func (ads *AddressLookupService) AddAddressFromDefaultJson() error {
-	return ads.AddAddressFromJson(URL_JSON_ADDRESSES)
+func (ads *AddressLookupService) AddAddressesFromDefaultJsonUrl() error {
+	return ads.AddAddressesFromJsonUrl(URL_JSON_ADDRESSES)
 }
