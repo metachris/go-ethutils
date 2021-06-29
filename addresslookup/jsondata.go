@@ -11,7 +11,7 @@ import (
 	"github.com/metachris/go-ethutils/addressdetail"
 )
 
-var URL_JSON_ADDRESSES string = "https://gist.githubusercontent.com/metachris/25d27d8f37d173ef8d9709190bb2e9ae/raw/cd8a514ce737c265ea8c28a9bd7f3fe5ee75f053/addressdata.json"
+var URL_JSON_ADDRESSES string = "https://metachris.github.io/go-ethutils/addresslookup/json/addresses.json"
 var FN_JSON_ADDRESSES string = "addresslookup/json/addresses.json"
 
 func GetAddressesFromJsonUrl(url string) (details []addressdetail.AddressDetail, err error) {
