@@ -1,5 +1,16 @@
 [
     {
+        "name": "MetaMask Dex",
+        "type": "OtherContract",
+        "address": "0x881D40237659C251811CEC9c364ef91dC08D300C",
+        "decimals": 18
+    },
+    {
+        "name": "Eth2 Depositor",
+        "type": "OtherContract",
+        "address": "0x27D71A464Da941118A4E056D0737274aA308a923"
+    },
+    {
         "name": "Binance",
         "address": "0x3f5CE5FBFe3E9af3971dD833D26bA9b5C936f0bE"
     },
@@ -73,21 +84,15 @@
     },
     {
         "name": "Babel Pool",
-        "address": "0xB3b7874F13387D44a3398D298B075B7A3505D8d4 "
+        "address": "0xB3b7874F13387D44a3398D298B075B7A3505D8d4"
     },
     {
         "name": "UUPool",
-        "address": "0xD224cA0c819e8E97ba0136B3b95ceFf503B79f53 "
+        "address": "0xD224cA0c819e8E97ba0136B3b95ceFf503B79f53"
     },
     {
-        "name": "MetaMask Dex",
-        "type": "OtherContract",
-        "address": "0x881D40237659C251811CEC9c364ef91dC08D300C",
-        "decimals": 18
-    },
-    {
-        "name": "Eth2 Depositor",
-        "type": "OtherContract",
-        "address": "0x27D71A464Da941118A4E056D0737274aA308a923"
+        "name": "Hiveon Pool",
+        "address": "0x1aD91ee08f21bE3dE0BA2ba6918E714dA6B45836",
+        "source": "etherscan"
     }
 ]
