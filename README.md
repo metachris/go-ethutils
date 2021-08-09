@@ -17,6 +17,7 @@ Helpers for working with Ethereum:
 * [utils/eth.go](https://github.com/metachris/go-ethutils/blob/master/utils/eth.go) - finding first block at or after a certain UTC timestamp
 * [utils/blockrangefinder.go](https://github.com/metachris/go-ethutils/blob/master/utils/blockrangefinder.go) - find a block range based on date, timespans or blocks
 * [utils/various.go](https://github.com/metachris/go-ethutils/blob/master/utils/various.go) - various utilities
+
 **Feedback**
 
 * Reach out to [twitter.com/metachris](https://twitter.com/metachris)
