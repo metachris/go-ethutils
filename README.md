@@ -9,14 +9,14 @@ Helpers for working with Ethereum:
 
 **Contents**
 
+* [utils/getblocks.go](https://github.com/metachris/go-ethutils/blob/master/utils/getblocks.go) - fast block ingress pipeline
 * [blockswithtx](https://github.com/metachris/go-ethutils/blob/master/blockswithtx) - fast, concurrent block+receipts downloading pipeline (use a geth IPC connection)
 * [smartcontracts](https://github.com/metachris/go-ethutils/blob/master/smartcontracts) - detect types of smart contracts, get contract details (eg. erc20, 721 properties, etc.)
-* [addressdetail](https://github.com/metachris/go-ethutils/blob/master/addressdetail) - helper type for smart contracts and addresses
 * [addresslookup](https://github.com/metachris/go-ethutils/blob/master/addresslookup) - get information of an address, either from JSON or from the blockchain
+* [addressdetail](https://github.com/metachris/go-ethutils/blob/master/addressdetail) - helper for smart contracts and addresses
 * [utils/eth.go](https://github.com/metachris/go-ethutils/blob/master/utils/eth.go) - finding first block at or after a certain UTC timestamp
 * [utils/blockrangefinder.go](https://github.com/metachris/go-ethutils/blob/master/utils/blockrangefinder.go) - find a block range based on date, timespans or blocks
 * [utils/various.go](https://github.com/metachris/go-ethutils/blob/master/utils/various.go) - various utilities
-
 **Feedback**
 
 * Reach out to [twitter.com/metachris](https://twitter.com/metachris)
