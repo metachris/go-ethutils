@@ -11,8 +11,13 @@ import (
 
 func main() {
 	ethNodeUri := os.Getenv("ETH_NODE")
+	if ethNodeUri == "" {
+		fmt.Println("Please set ETH_NODE environment variable")
+		os.Exit(1)
+	}
+
 	client, err := ethclient.Dial(ethNodeUri)
-	// utils.Perror(err)
+	utils.Perror(err)
 	addressLookup := addresslookup.NewAddressLookupService(client)
 
 	err = addressLookup.AddAllAddresses()
